@@ -186,11 +186,21 @@ export function displayDate(ticks) {
     return monthNames[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
 }
 
-export function displayTime(ticks) {
+export function displayTime(ticks, utc) {
     const d = new Date(ticks);
-    let hours = d.getHours();
-    let minutes = d.getMinutes();
+    let hours;
+    let minutes;
     let ampm = '';
+    let timezone = '';
+
+    if (utc) {
+        hours = d.getUTCHours();
+        minutes = d.getUTCMinutes();
+        timezone = ' UTC';
+    } else {
+        hours = d.getHours();
+        minutes = d.getMinutes();
+    }
 
     if (minutes <= 9) {
         minutes = '0' + minutes;
@@ -209,7 +219,7 @@ export function displayTime(ticks) {
         }
     }
 
-    return hours + ':' + minutes + ampm;
+    return hours + ':' + minutes + ampm + timezone;
 }
 
 export function displayDateTime(ticks) {
@@ -1260,4 +1270,17 @@ export function isFeatureEnabled(feature) {
 
 export function isSystemMessage(post) {
     return post.type && (post.type.lastIndexOf(Constants.SYSTEM_MESSAGE_PREFIX) === 0);
+}
+
+export function clearFileInput(elm) {
+    // clear file input for all modern browsers
+    try {
+        elm.value = '';
+        if (elm.value) {
+            elm.type = 'text';
+            elm.type = 'file';
+        }
+    } catch (e) {
+        // Do nothing
+    }
 }
